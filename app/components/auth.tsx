@@ -48,7 +48,7 @@ export function AuthPage() {
 
   return (
     <div className={styles["auth-page"]}>
-      <TopBanner></TopBanner>
+      {/* <TopBanner></TopBanner> */}
       <div className={styles["auth-header"]}>
         <IconButton
           icon={<LeftIcon />}
@@ -131,14 +131,14 @@ function TopBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const isMobile = useMobileScreen();
   useEffect(() => {
-    // 检查 localStorage 中是否有标记
+    // Check if there is a mark in localsteage
     const bannerDismissed = storage.getItem("bannerDismissed");
-    // 如果标记不存在，存储默认值并显示横幅
+    // If the tag does not exist, store the default value and display the banner
     if (!bannerDismissed) {
       storage.setItem("bannerDismissed", "false");
-      setIsVisible(true); // 显示横幅
+      setIsVisible(true); // Display banner
     } else if (bannerDismissed === "true") {
-      // 如果标记为 "true"，则隐藏横幅
+      // If marked as "true", the banner is hidden
       setIsVisible(false);
     }
   }, []);
