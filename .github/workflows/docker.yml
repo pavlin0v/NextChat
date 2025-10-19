@@ -25,10 +25,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: yidadaa/chatgpt-next-web
+          images: pavlinov/nextchat-frontend
           tags: |
-            type=raw,value=latest
-            type=ref,event=tag
+            type=ref,event=branch,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
       
       - 
         name: Set up QEMU
