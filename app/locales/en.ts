@@ -222,6 +222,14 @@ const en: LocaleType = {
       Title: "Auto Generate Title",
       SubTitle: "Generate a suitable title based on the conversation content",
     },
+    Advanced: {
+      Role: {
+        Title: "Role Advanced Settings",
+      },
+      Model: {
+        Title: "Model Advanced Settings",
+      },
+    },
     Sync: {
       CloudState: "Last Update",
       NotSyncYet: "Not sync yet",

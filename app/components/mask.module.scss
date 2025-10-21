@@ -106,3 +106,29 @@
     }
   }
 }
+
+.advanced-toggle {
+  cursor: pointer;
+
+  .advanced-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &.advanced-toggle-icon-open {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.advanced-content {
+  animation: slide-in ease 0.3s;
+  overflow: hidden;
+  padding-top: 10px;
+}
