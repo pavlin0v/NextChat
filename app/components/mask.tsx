@@ -37,13 +37,16 @@ import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { useNavigate } from "react-router-dom";
 
 import chatStyle from "./chat.module.scss";
+import clsx from "clsx";
 import { useState } from "react";
 import {
   copyToClipboard,
   downloadAs,
   getMessageImages,
   readFromFile,
+  getMessageTextContent,
 } from "../utils";
+import DownIcon from "../icons/down.svg";
 import { Updater } from "../typing";
 import { ModelConfigList } from "./model-config";
 import { FileName, Path } from "../constant";
@@ -54,8 +57,6 @@ import {
   Draggable,
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
-import { getMessageTextContent } from "../utils";
-import clsx from "clsx";
 
 // drag and drop helper function
 function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
@@ -81,6 +82,7 @@ export function MaskConfig(props: {
   shouldSyncFromGlobal?: boolean;
 }) {
   const [showPicker, setShowPicker] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const updateConfig = (updater: (config: ModelConfig) => void) => {
     if (props.readonly) return;
@@ -152,98 +154,116 @@ export function MaskConfig(props: {
           ></input>
         </ListItem>
         <ListItem
-          title={Locale.Mask.Config.HideContext.Title}
-          subTitle={Locale.Mask.Config.HideContext.SubTitle}
+          className={styles["advanced-toggle"]}
+          title={Locale.Settings.Advanced.Role.Title}
+          onClick={() => setShowAdvanced((prev) => !prev)}
         >
-          <input
-            aria-label={Locale.Mask.Config.HideContext.Title}
-            type="checkbox"
-            checked={props.mask.hideContext}
-            onChange={(e) => {
-              props.updateMask((mask) => {
-                mask.hideContext = e.currentTarget.checked;
-              });
-            }}
-          ></input>
+          <div
+            className={clsx(styles["advanced-toggle-icon"], {
+              [styles["advanced-toggle-icon-open"]]: showAdvanced,
+            })}
+          >
+            <DownIcon />
+          </div>
         </ListItem>
 
-        {globalConfig.enableArtifacts && (
-          <ListItem
-            title={Locale.Mask.Config.Artifacts.Title}
-            subTitle={Locale.Mask.Config.Artifacts.SubTitle}
-          >
-            <input
-              aria-label={Locale.Mask.Config.Artifacts.Title}
-              type="checkbox"
-              checked={props.mask.enableArtifacts !== false}
-              onChange={(e) => {
-                props.updateMask((mask) => {
-                  mask.enableArtifacts = e.currentTarget.checked;
-                });
-              }}
-            ></input>
-          </ListItem>
-        )}
-        {globalConfig.enableCodeFold && (
-          <ListItem
-            title={Locale.Mask.Config.CodeFold.Title}
-            subTitle={Locale.Mask.Config.CodeFold.SubTitle}
-          >
-            <input
-              aria-label={Locale.Mask.Config.CodeFold.Title}
-              type="checkbox"
-              checked={props.mask.enableCodeFold !== false}
-              onChange={(e) => {
-                props.updateMask((mask) => {
-                  mask.enableCodeFold = e.currentTarget.checked;
-                });
-              }}
-            ></input>
-          </ListItem>
-        )}
-
-        {!props.shouldSyncFromGlobal ? (
-          <ListItem
-            title={Locale.Mask.Config.Share.Title}
-            subTitle={Locale.Mask.Config.Share.SubTitle}
-          >
-            <IconButton
-              aria={Locale.Mask.Config.Share.Title}
-              icon={<CopyIcon />}
-              text={Locale.Mask.Config.Share.Action}
-              onClick={copyMaskLink}
-            />
-          </ListItem>
-        ) : null}
-
-        {props.shouldSyncFromGlobal ? (
-          <ListItem
-            title={Locale.Mask.Config.Sync.Title}
-            subTitle={Locale.Mask.Config.Sync.SubTitle}
-          >
-            <input
-              aria-label={Locale.Mask.Config.Sync.Title}
-              type="checkbox"
-              checked={props.mask.syncGlobalConfig}
-              onChange={async (e) => {
-                const checked = e.currentTarget.checked;
-                if (
-                  checked &&
-                  (await showConfirm(Locale.Mask.Config.Sync.Confirm))
-                ) {
+        {showAdvanced && (
+          <div className={styles["advanced-content"]}>
+            <ListItem
+              title={Locale.Mask.Config.HideContext.Title}
+              subTitle={Locale.Mask.Config.HideContext.SubTitle}
+            >
+              <input
+                aria-label={Locale.Mask.Config.HideContext.Title}
+                type="checkbox"
+                checked={props.mask.hideContext}
+                onChange={(e) => {
                   props.updateMask((mask) => {
-                    mask.syncGlobalConfig = checked;
-                    mask.modelConfig = { ...globalConfig.modelConfig };
+                    mask.hideContext = e.currentTarget.checked;
                   });
-                } else if (!checked) {
-                  props.updateMask((mask) => {
-                    mask.syncGlobalConfig = checked;
-                  });
-                }
-              }}
-            ></input>
-          </ListItem>
-        ) : null}
+                }}
+              ></input>
+            </ListItem>
+
+            {globalConfig.enableArtifacts && (
+              <ListItem
+                title={Locale.Mask.Config.Artifacts.Title}
+                subTitle={Locale.Mask.Config.Artifacts.SubTitle}
+              >
+                <input
+                  aria-label={Locale.Mask.Config.Artifacts.Title}
+                  type="checkbox"
+                  checked={props.mask.enableArtifacts !== false}
+                  onChange={(e) => {
+                    props.updateMask((mask) => {
+                      mask.enableArtifacts = e.currentTarget.checked;
+                    });
+                  }}
+                ></input>
+              </ListItem>
+            )}
+            {globalConfig.enableCodeFold && (
+              <ListItem
+                title={Locale.Mask.Config.CodeFold.Title}
+                subTitle={Locale.Mask.Config.CodeFold.SubTitle}
+              >
+                <input
+                  aria-label={Locale.Mask.Config.CodeFold.Title}
+                  type="checkbox"
+                  checked={props.mask.enableCodeFold !== false}
+                  onChange={(e) => {
+                    props.updateMask((mask) => {
+                      mask.enableCodeFold = e.currentTarget.checked;
+                    });
+                  }}
+                ></input>
+              </ListItem>
+            )}
+
+            {!props.shouldSyncFromGlobal ? (
+              <ListItem
+                title={Locale.Mask.Config.Share.Title}
+                subTitle={Locale.Mask.Config.Share.SubTitle}
+              >
+                <IconButton
+                  aria={Locale.Mask.Config.Share.Title}
+                  icon={<CopyIcon />}
+                  text={Locale.Mask.Config.Share.Action}
+                  onClick={copyMaskLink}
+                />
+              </ListItem>
+            ) : null}
+
+            {props.shouldSyncFromGlobal ? (
+              <ListItem
+                title={Locale.Mask.Config.Sync.Title}
+                subTitle={Locale.Mask.Config.Sync.SubTitle}
+              >
+                <input
+                  aria-label={Locale.Mask.Config.Sync.Title}
+                  type="checkbox"
+                  checked={props.mask.syncGlobalConfig}
+                  onChange={async (e) => {
+                    const checked = e.currentTarget.checked;
+                    if (
+                      checked &&
+                      (await showConfirm(Locale.Mask.Config.Sync.Confirm))
+                    ) {
+                      props.updateMask((mask) => {
+                        mask.syncGlobalConfig = checked;
+                        mask.modelConfig = { ...globalConfig.modelConfig };
+                      });
+                    } else if (!checked) {
+                      props.updateMask((mask) => {
+                        mask.syncGlobalConfig = checked;
+                      });
+                    }
+                  }}
+                ></input>
+              </ListItem>
+            ) : null}
+          </div>
+        )}
       </List>
 
       <List>

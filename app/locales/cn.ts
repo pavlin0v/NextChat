@@ -220,6 +220,14 @@ const cn = {
       Title: "自动生成标题",
       SubTitle: "根据对话内容生成合适的标题",
     },
+    Advanced: {
+      Role: {
+        Title: "角色高级设置",
+      },
+      Model: {
+        Title: "模型高级设置",
+      },
+    },
     Sync: {
       CloudState: "云端数据",
       NotSyncYet: "还没有进行过同步",
